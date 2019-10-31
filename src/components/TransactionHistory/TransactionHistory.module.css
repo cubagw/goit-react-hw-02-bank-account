@@ -1,0 +1,18 @@
+.history {
+    width: 900px;
+    margin: 0 auto;
+  }
+  
+  .historyItem {
+    text-align: center;
+  }
+  
+  .historyTd {
+    padding: 15px;
+    border: 1px solid #ebeef3;
+  }
+  
+  th {
+    text-align: center;
+    background: #ebeef3;
+  }
