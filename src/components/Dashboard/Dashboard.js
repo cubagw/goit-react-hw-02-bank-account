@@ -34,9 +34,10 @@ export default class Dashboard extends Component {
       date: new Date(),
     };
     this.setState(prevState => {
-      prevState.transactions.push(transaction);
+      const arrOfTransactions = prevState.transactions.push(transaction);
+      // const masOfTransactions = [...arrOfTransactions, transaction];
+      // console.log(masOfTransactions);
     });
-    console.dir(this.state.transactions);
   };
 
   render() {
@@ -57,7 +58,7 @@ export default class Dashboard extends Component {
         </section>
 
         {/* <!-- Разметка компонента <TransactionHistory> --> */}
-        <TransactionHistory items={transactions} />
+        <TransactionHistory items={[transactions]} />
       </div>
     );
   }

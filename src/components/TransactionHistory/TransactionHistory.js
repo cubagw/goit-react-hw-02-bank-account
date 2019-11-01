@@ -13,7 +13,7 @@ const TransactionHistory = ({ items }) =>
             <th>Date</th>
           </tr>
         </thead>
-        <tbody className={styles.historyTd}>
+        <tbody>
           <tr>
             <td className={styles.historyTd}>{item.type}</td>
             <td className={styles.historyTd}>{item.inputValue}$</td>
