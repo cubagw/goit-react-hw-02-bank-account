@@ -3,10 +3,8 @@ import shortid from 'short-id';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Controls from '../Controls/Controls';
-
-// import Balance from '../Balance/Balance';
+import Balance from '../Balance/Balance';
 import TransactionHistory from '../TransactionHistory/TransactionHistory';
-
 import styles from './Dashboard.module.css';
 
 toast.configure({
@@ -26,39 +24,71 @@ export default class Dashboard extends Component {
       return;
     }
 
-    console.log(inputValue);
     const transaction = {
       id: shortid.generate(),
       type: 'Deposit',
       inputValue,
-      date: new Date(),
+      date: new Date().toLocaleString(),
     };
-    this.setState(prevState => {
-      const arrOfTransactions = prevState.transactions.push(transaction);
-      // const masOfTransactions = [...arrOfTransactions, transaction];
-      // console.log(masOfTransactions);
-    });
+    this.setState(state => ({
+      transactions: [...state.transactions, transaction],
+      balance: Number(state.balance) + Number(transaction.inputValue),
+    }));
+  };
+
+  withdrawTransaction = inputValue => {
+    if (inputValue <= 0) {
+      toast.info('Введите сумму для проведения операции!');
+      return;
+    }
+    if (inputValue > this.state.balance) {
+      toast.info('На счету недостаточно средств для проведения операции!');
+      return;
+    }
+
+    const transaction = {
+      id: shortid.generate(),
+      type: 'Withdraw',
+      inputValue,
+      date: new Date().toLocaleString(),
+    };
+
+    this.setState(state => ({
+      transactions: [...state.transactions, transaction],
+      balance: Number(state.balance) - Number(transaction.inputValue),
+    }));
+  };
+
+  transactionsCounter = (transactions, billType) => {
+    const filterByType = transactions.filter(el => el.type === billType);
+    const total = filterByType.reduce(
+      (acc, value) => Number(acc) + Number(value.inputValue),
+      0,
+    );
+
+    return total;
   };
 
   render() {
-    const { balance, transactions } = this.state;
+    const { transactions, balance } = this.state;
     return (
       <div className={styles.dashboard}>
         {/* <!-- Разметка компонента <Controls> --> */}
         <Controls
-          depositTransaction={this.depositTransaction}
-          withdrawTransaction={this.withdrawTransaction}
+          onSubmitDeposit={this.depositTransaction}
+          onSubmitWithdraw={this.withdrawTransaction}
         />
 
         {/* <!-- Разметка компонента <Balance> --> */}
-        <section className={styles.balance}>
-          <span>⬆2000$</span>
-          <span>⬇1000$</span>
-          <span>Balance: 5000$</span>
-        </section>
+        <Balance
+          income={this.transactionsCounter(transactions, 'Deposit')}
+          expenses={this.transactionsCounter(transactions, 'Withdraw')}
+          balance={balance}
+        />
 
         {/* <!-- Разметка компонента <TransactionHistory> --> */}
-        <TransactionHistory items={[transactions]} />
+        <TransactionHistory items={transactions} />
+        {/* {transactions.lenght > 0 && <TransactionHistory items={transactions} />} */}
       </div>
     );
   }

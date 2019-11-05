@@ -4,26 +4,36 @@ import styles from './Controls.module.css';
 
 class Controls extends Component {
   static propTypes = {
-    depositTransaction: T.func.isRequired,
-    withdrawTransaction: T.func.isRequired,
+    onSubmitDeposit: T.func.isRequired,
+    onSubmitWithdraw: T.func.isRequired,
   };
 
   state = {
     inputValue: '',
   };
 
-  reset() {
-    this.setState({
-      inputValue: '',
-    });
-  }
-
   handleChangeInputValue = e => {
     this.setState({ inputValue: e.target.value });
   };
 
+  handleSubmitDeposit = e => {
+    e.preventDefault();
+    this.props.onSubmitDeposit(this.state.inputValue);
+    this.setState({
+      inputValue: '',
+    });
+  };
+
+  handleSubmitWithdraw = e => {
+    e.preventDefault();
+    this.props.onSubmitWithdraw(this.state.inputValue);
+    this.setState({
+      inputValue: '',
+    });
+  };
+
   render() {
-    const { depositTransaction, withdrawTransaction } = this.props;
+    // const { onSubmit, withdrawTransaction } = this.props;
     const { inputValue } = this.state;
 
     return (
@@ -38,20 +48,14 @@ class Controls extends Component {
         <button
           className={styles.button}
           type="button"
-          onClick={() => {
-            depositTransaction(Number(inputValue));
-            this.reset();
-          }}
+          onClick={this.handleSubmitDeposit}
         >
           Deposit
         </button>
         <button
           className={styles.button}
           type="button"
-          onClick={() => {
-            withdrawTransaction(Number(inputValue));
-            this.reset();
-          }}
+          onClick={this.handleSubmitWithdraw}
         >
           Withdraw
         </button>
